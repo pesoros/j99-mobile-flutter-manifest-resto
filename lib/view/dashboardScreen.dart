@@ -35,10 +35,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         color: Colors.black,
         child: Row(
           children: [
-            // Image.asset(
-            //   "assets/images/j99-logo.png",
-            //   width: MediaQuery.of(context).size.width / 3,
-            // ),
+            Image.asset(
+              "assets/images/j99-logo.png",
+              width: MediaQuery.of(context).size.width / 3,
+            ),
             VerticalDivider(color: Colors.white),
             Text(
               "Resto",

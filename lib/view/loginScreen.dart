@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:j99_mobile_flutter_manifest_resto/controller/loginController.dart';
 import 'package:j99_mobile_flutter_manifest_resto/view/dashboardScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:j99_mobile_flutter_manifest_resto/variables.dart' as variable;
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -37,10 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Image.asset(
-          //   "assets/images/j99-logo.png",
-          //   width: MediaQuery.of(context).size.width / 1.5,
-          // ),
+          Image.asset(
+            "assets/images/j99-logo.png",
+            width: MediaQuery.of(context).size.width / 1.5,
+          ),
           SizedBox(height: 40),
           Container(
             padding: EdgeInsets.only(),
@@ -53,11 +54,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: 'Email',
                   labelStyle: TextStyle(color: Colors.white),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 2, color: Colors.white),
+                    borderSide: BorderSide(width: 2, color: Colors.white),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 2, color: Colors.white),
+                    borderSide: BorderSide(width: 2, color: Colors.white),
                     borderRadius: BorderRadius.circular(15),
                   )),
             ),
@@ -74,11 +75,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 labelText: 'Password',
                 labelStyle: TextStyle(color: Colors.white),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 2, color: Colors.white),
+                  borderSide: BorderSide(width: 2, color: Colors.white),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 2, color: Colors.white),
+                  borderSide: BorderSide(width: 2, color: Colors.white),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 suffixIcon: IconButton(
@@ -113,27 +114,33 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(child: Text("Masuk")),
       ),
       onTap: () async {
-        // final prefs = await SharedPreferences.getInstance();
-        // await Login.list(emailController.text, passwordController.text)
-        //     .then((value) async {
-        //   var res = jsonDecode(value.body);
-        //   if (value.statusCode == 200) {
-        //     await prefs.setString('email', emailController.text);
-        //     await prefs.setString('password', passwordController.text);
-        //     setState(() {
-        //       variable.manifest_id = res['manifest']['id'].toString();
-        //       variable.trip_id_no = res['manifest']['trip_id_no'].toString();
-        //       variable.trip_date = res['manifest']['trip_date'].toString();
-        //     });
+        FocusManager.instance.primaryFocus?.unfocus();
+        final prefs = await SharedPreferences.getInstance();
+        await login(emailController.text, passwordController.text)
+            .then((value) async {
+          var statusCode = value.statusCode;
+          var res = jsonDecode(value.body);
+          print(res);
+          if (statusCode == 200) {
+            await prefs.setString('email', emailController.text);
+            await prefs.setString('password', passwordController.text);
+            // setState(() {
+            //   variable.manifest_id = res['manifest']['id'].toString();
+            //   variable.trip_id_no = res['manifest']['trip_id_no'].toString();
+            //   variable.trip_date = res['manifest']['trip_date'].toString();
+            // });
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DashboardScreen(),
-          ),
-        );
-        //   } else {}
-        // });
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DashboardScreen(),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(statusCode.toString())));
+          }
+        });
       },
     );
   }
