@@ -1,4 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:j99_mobile_flutter_manifest_resto/controller/dashboardController.dart';
+import 'package:j99_mobile_flutter_manifest_resto/variables.dart' as variable;
+import 'package:j99_mobile_flutter_manifest_resto/view/detailScreen.dart';
+import 'package:j99_mobile_flutter_manifest_resto/view/splashScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({Key key}) : super(key: key);
@@ -8,6 +15,26 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  // String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String formattedDate = "2022-12-23";
+  bool isLoad = true;
+  List<Order> order = [];
+
+  getData() async {
+    await getOrder(formattedDate, variable.resto_id).then((val) {
+      setState(() {
+        order = val;
+        isLoad = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -18,7 +45,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            bodyWidget(context),
+            (isLoad)
+                ? Expanded(
+                    child: Center(
+                      child: CupertinoActivityIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                : (order.isEmpty)
+                    ? Expanded(
+                        child: Center(
+                            child: Text(
+                          "Data Kosong",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                      )
+                    : bodyWidget(context),
             SizedBox(height: 30),
             buttonWidget(context),
           ],
@@ -52,64 +95,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   bodyWidget(BuildContext context) {
-    double wd = (MediaQuery.of(context).size.width / 2) - 60;
     return Expanded(
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              InkWell(
-                onTap: () {
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => SplashScreen(),
-                  //   ),
-                  // );
-                },
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.red,
+      child: Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: ListView.separated(
+          physics: BouncingScrollPhysics(),
+          itemCount: order.length,
+          itemBuilder: ((context, index) {
+            Order x = order[index];
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailScreen(x.armada, x.order),
                   ),
-                  width: wd,
-                  height: wd,
-                  child: Center(
-                    child: Text(
-                      "Detail",
-                      style: TextStyle(fontSize: 16),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.redAccent),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          x.armada,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                  ),
+                    Icon(Icons.arrow_forward_ios),
+                  ],
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => SplashScreen(),
-                  //   ),
-                  // );
-                },
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.red,
-                  ),
-                  width: wd,
-                  height: wd,
-                  child: Center(
-                    child: Text(
-                      "List",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          }),
+          separatorBuilder: ((context, index) {
+            return Divider();
+          }),
         ),
       ),
     );
@@ -128,20 +158,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Center(child: Text("Keluar")),
         ),
         onTap: () async {
-          // final prefs = await SharedPreferences.getInstance();
-          // await prefs.remove("email");
-          // await prefs.remove("password");
-          // setState(() {
-          //   variable.manifest_id = null;
-          //   variable.trip_id_no = null;
-          //   variable.trip_date = null;
-          // });
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => SplashScreen(),
-          //   ),
-          // );
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove("email");
+          await prefs.remove("password");
+          setState(() {
+            variable.resto_id = null;
+          });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SplashScreen(),
+            ),
+          );
         },
       ),
     );

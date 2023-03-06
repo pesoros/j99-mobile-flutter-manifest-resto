@@ -120,16 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
             .then((value) async {
           var statusCode = value.statusCode;
           var res = jsonDecode(value.body);
-          print(res);
           if (statusCode == 200) {
             await prefs.setString('email', emailController.text);
             await prefs.setString('password', passwordController.text);
-            // setState(() {
-            //   variable.manifest_id = res['manifest']['id'].toString();
-            //   variable.trip_id_no = res['manifest']['trip_id_no'].toString();
-            //   variable.trip_date = res['manifest']['trip_date'].toString();
-            // });
-
+            setState(() {
+              variable.resto_id = res['resto_detail']['resto_id'].toString();
+            });
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

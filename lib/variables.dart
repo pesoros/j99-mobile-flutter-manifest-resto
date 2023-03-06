@@ -2,6 +2,4 @@
 
 library j99_mobile_flutter_manifest_resto.variabels;
 
-String manifest_id;
-String trip_id_no;
-String trip_date;
+String resto_id;
