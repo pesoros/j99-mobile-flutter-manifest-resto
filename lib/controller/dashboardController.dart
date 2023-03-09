@@ -2,9 +2,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 getOrder(String date, restoId) async {
-  String url = "https://api.j99dev.my.id/resto/order";
+  String url = dotenv.env['BASE_URL'] + "/resto/order";
+  // String url = "https://api.j99dev.my.id/resto/order";
 
   Uri parseUrl = Uri.parse(url);
   final response = await http.post(parseUrl, headers: {

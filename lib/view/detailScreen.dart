@@ -9,7 +9,7 @@ import 'package:j99_mobile_flutter_manifest_resto/controller/detailController.da
 class DetailScreen extends StatefulWidget {
   String armada;
   List<OrderDetail> order;
-  DetailScreen(this.armada, this.order);
+  DetailScreen(this.armada, this.order, {Key key}) : super(key: key);
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();

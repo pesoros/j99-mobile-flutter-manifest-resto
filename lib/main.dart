@@ -1,9 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:j99_mobile_flutter_manifest_resto/view/loginScreen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:j99_mobile_flutter_manifest_resto/view/splashScreen.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
+  if (kDebugMode) {
+    await dotenv.load(fileName: "debug.env");
+  }
+  if (kReleaseMode) {
+    await dotenv.load(fileName: "release.env");
+  }
 }
 
 class MyApp extends StatelessWidget {

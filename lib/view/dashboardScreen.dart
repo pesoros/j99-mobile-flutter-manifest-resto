@@ -15,8 +15,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  // String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String formattedDate = "2022-12-23";
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  // String formattedDate = "2022-12-23";
   bool isLoad = true;
   List<Order> order = [];
 
